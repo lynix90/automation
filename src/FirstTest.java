@@ -32,6 +32,6 @@ public class FirstTest {
     @Test
     public void firstTest()
     {
-        System.out.println("FirstTestRun");
+        System.out.println("FirstTest");
     }
 }
