@@ -15,12 +15,12 @@ public class FirstTest {
     {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName","Android");
-        capabilities.setCapability("deviceName","AndroidTestDevice");
-        capabilities.setCapability("platformVersion","10");
+        capabilities.setCapability("deviceName","Nexus5x");
+        capabilities.setCapability("platformVersion","6.0.1");
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity","main.MainActivity");
-        capabilities.setCapability("app","C:/Users/Home/Desktop/Automation/apks/Википедия-2.6.198-r-2017-06-09.apk");
+        capabilities.setCapability("app","C:/Users/Home/Desktop/Automation/apks/org.wikipedia.apk");
 
         driver=new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
@@ -30,8 +30,8 @@ public class FirstTest {
         driver.quit();
     }
     @Test
-    public void firstTest()
+    public void myTest()
     {
-        System.out.println("FirstTest");
+        System.out.println("Test OK");
     }
 }
