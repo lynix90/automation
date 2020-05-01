@@ -8,18 +8,16 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.net.URL;
-
-public class FirstTest {
+public class FirstTest
+{
     private AppiumDriver driver;
-
     @Before
     public void setUp() throws Exception
     {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName","Android");
-        capabilities.setCapability("deviceName","S10e");
+        capabilities.setCapability("deviceName","S10");
         capabilities.setCapability("platformVersion","10");
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
@@ -38,16 +36,22 @@ public class FirstTest {
     {
         WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Поиск по Википедии')]");
         element_to_init_search.click();
-        WebElement element_to_search_line = waitForElement("//*[contains (@text,'search_src_text')]" , "Cannot find input" , 10);
-        element_to_search_line.sendKeys("java");
+        WebElement element_to_search_line = waitForElement("//*[contains (@text,'search_src_text')]",
+                "Cannot find input" , 5);
+        element_to_search_line.sendKeys("Java");
     }
-    private WebElement waitForElement(String id,String error_message, long timeoutInSeconds)
+        private WebElement waitForElement(String id, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait=new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
         By by = By.id("search_src_text");
-        return wait.until(
-                ExpectedConditions.presenceOfElementLocated(by)
-        );
+        return wait.until
+                (
+                        ExpectedConditions.presenceOfElementLocated(by)
+                );
+    }
+    private WebElement waitForElement(String id,String error_message)
+    {
+        return waitForElement(id, error_message, 10);
     }
 }
