@@ -19,8 +19,8 @@ public class FirstTest {
     {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName","Android");
-        capabilities.setCapability("deviceName","PRO7");
-        capabilities.setCapability("platformVersion","7.0");
+        capabilities.setCapability("deviceName","S10e");
+        capabilities.setCapability("platformVersion","10");
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity","main.MainActivity");
@@ -36,16 +36,16 @@ public class FirstTest {
     @Test
     public void myTest()
     {
-        WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Search Wikipedia')]");
+        WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Поиск по Википедии')]");
         element_to_init_search.click();
-        WebElement element_to_search_line = waitForElementPresentByXpath("//*[contains (@text,'Search…')]" , "Cannot find input" , 10);
-        element_to_search_line.sendKeys("Java");
+        WebElement element_to_search_line = waitForElement("//*[contains (@text,'search_src_text')]" , "Cannot find input" , 10);
+        element_to_search_line.sendKeys("java");
     }
-    private WebElement waitForElementPresentByXpath(String xpath,String error_message, long timeoutInSeconds)
+    private WebElement waitForElement(String id,String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait=new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
-        By by = By.xpath(xpath);
+        By by = By.id("search_src_text");
         return wait.until(
                 ExpectedConditions.presenceOfElementLocated(by)
         );
