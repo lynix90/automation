@@ -32,15 +32,14 @@ public class FirstTest {
     }
 
     @Test
-    public void myTest() {
-        waitForElementAndClick ("//*[contains(@text, 'Search Wikipedia')]","Can't find Search Wikipedia input or click on it", 5);
-     //   WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Search Wikipedia')]");
-        // element_to_init_search.click();
-        waitForElementAndSendKeys("//*[contains (@text,'Search…')]", "Java", "Can't find the search element or sendkeys", 5);
-        //WebElement element_to_search_line = waitForElementByXpath("//*[contains (@text,'Search…')]",
-          //      "Cannot find input");
-        //element_to_search_line.sendKeys("Java");
-        waitForElementByXpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']", "can't find and click on element of search");
+    public void myTest()
+    {
+        waitForElementByXpathAndClick("//*[contains(@text, 'Search Wikipedia')]","Can't find Search Wikipedia input or click on it", 5);
+
+        waitForElementByXpathAndSendKeys("//*[contains (@text,'Search…')]", "Java", "Can't find the search element or sendkeys", 5);
+
+        waitForElementByXpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']",
+                "can't find and click on element of search");
         }
 
     private WebElement waitForElementByXpath(String xpath, String error_message, long timeoutInSeconds)
@@ -58,13 +57,13 @@ public class FirstTest {
     {
         return waitForElementByXpath(xpath, error_message, 10);
     }
-    private WebElement waitForElementAndClick(String xpath, String error_message, long timeoutInSeconds)
+    private WebElement waitForElementByXpathAndClick(String xpath, String error_message, long timeoutInSeconds)
     {
         WebElement element = waitForElementByXpath(xpath, error_message, timeoutInSeconds);
         element.click();
         return element;
     }
-    private WebElement waitForElementAndSendKeys(String xpath, String value, String error_message, long timeoutInSeconds)
+    private WebElement waitForElementByXpathAndSendKeys(String xpath, String value, String error_message, long timeoutInSeconds)
     {
         WebElement element = waitForElementByXpath(xpath, error_message, timeoutInSeconds);
         element.sendKeys(value);
