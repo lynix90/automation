@@ -9,49 +9,65 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
-public class FirstTest
-{
+public class FirstTest {
     private AppiumDriver driver;
-    @Before
-    public void setUp() throws Exception
-    {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("platformName","Android");
-        capabilities.setCapability("deviceName","S10");
-        capabilities.setCapability("platformVersion","10");
-        capabilities.setCapability("automationName","Appium");
-        capabilities.setCapability("appPackage","org.wikipedia");
-        capabilities.setCapability("appActivity","main.MainActivity");
-        capabilities.setCapability("app","C:/Users/Home/Desktop/Automation/apks/org.wikipedia.apk");
 
-        driver=new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+    @Before
+    public void setUp() throws Exception {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("platformName", "Android");
+        capabilities.setCapability("deviceName", "S10");
+        capabilities.setCapability("platformVersion", "10");
+        capabilities.setCapability("automationName", "Appium");
+        capabilities.setCapability("appPackage", "org.wikipedia");
+        capabilities.setCapability("appActivity", "main.MainActivity");
+        capabilities.setCapability("app", "C:/Users/Home/Desktop/Automation/apks/org.wikipedia.apk");
+
+        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
+
     @After
-    public void tearDown()
-    {
+    public void tearDown() {
         driver.quit();
     }
+
     @Test
-    public void myTest()
+    public void myTest() {
+        waitForElementAndClick ("//*[contains(@text, 'Search Wikipedia')]","Can't find Search Wikipedia input or click on it", 5);
+     //   WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Search Wikipedia')]");
+        // element_to_init_search.click();
+        waitForElementAndSendKeys("//*[contains (@text,'Search…')]", "Java", "Can't find the search element or sendkeys", 5);
+        //WebElement element_to_search_line = waitForElementByXpath("//*[contains (@text,'Search…')]",
+          //      "Cannot find input");
+        //element_to_search_line.sendKeys("Java");
+        waitForElementByXpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']", "can't find and click on element of search");
+        }
+
+    private WebElement waitForElementByXpath(String xpath, String error_message, long timeoutInSeconds)
     {
-        WebElement element_to_init_search = driver.findElementByXPath("//*[contains(@text, 'Поиск по Википедии')]");
-        element_to_init_search.click();
-        WebElement element_to_search_line = waitForElement("//*[contains (@text,'search_src_text')]",
-                "Cannot find input" , 5);
-        element_to_search_line.sendKeys("Java");
-    }
-        private WebElement waitForElement(String id, String error_message, long timeoutInSeconds)
-    {
-        WebDriverWait wait=new WebDriverWait(driver, timeoutInSeconds);
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
-        By by = By.id("search_src_text");
+        By by = By.xpath(xpath);
         return wait.until
                 (
                         ExpectedConditions.presenceOfElementLocated(by)
                 );
     }
-    private WebElement waitForElement(String id,String error_message)
+
+    private WebElement waitForElementByXpath(String xpath, String error_message)
     {
-        return waitForElement(id, error_message, 10);
+        return waitForElementByXpath(xpath, error_message, 10);
+    }
+    private WebElement waitForElementAndClick(String xpath, String error_message, long timeoutInSeconds)
+    {
+        WebElement element = waitForElementByXpath(xpath, error_message, timeoutInSeconds);
+        element.click();
+        return element;
+    }
+    private WebElement waitForElementAndSendKeys(String xpath, String value, String error_message, long timeoutInSeconds)
+    {
+        WebElement element = waitForElementByXpath(xpath, error_message, timeoutInSeconds);
+        element.sendKeys(value);
+        return element;
     }
 }
