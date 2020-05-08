@@ -1,6 +1,7 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -47,15 +48,39 @@ public class FirstTest {
         waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
                 "Can't find 'Search Wikipedia' input or click on it",
                 5);
-
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Can't type 'Java' or find the search field",
+                5);
+        waitForElementAndClear(By.id("org.wikipedia:id/search_src_text"),
+                "Can't find search field",
+                5);
         waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"),
                         "Can't find close button or click on it",
                         5);
-
         waitForElementNotPresent(
                 By.id("org.wikipedia:id/search_close_btn"),
                 "The close element is presented on this screen",
                 5);
+    }
+    @Test
+    public void testCompareArticleTitle()
+    {
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Can't find 'Search Wikipedia' input or click on it",
+                5);
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Can't type 'Java' or find the search field",
+                5);
+        waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "can't find and click on element of search",
+                5);
+        WebElement title_element = waitForElementPresent(By.id("org.wikipedia:id/view_page_title_text"),
+                "Can't find article title",
+                10);
+        String article_title = title_element.getAttribute("text");
+        Assert.assertEquals("Title isn't equals with expected", "Java (programming language)", article_title);
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
@@ -90,5 +115,11 @@ public class FirstTest {
         return wait.until(
                 ExpectedConditions.invisibilityOfElementLocated(by)
         );
+    }
+    private WebElement waitForElementAndClear(By by, String error_message, long timeoutInSeconds)
+    {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        element.clear();
+        return (element);
     }
 }
