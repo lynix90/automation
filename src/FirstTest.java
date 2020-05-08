@@ -10,6 +10,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
+
 public class FirstTest {
     private AppiumDriver driver;
 
@@ -82,7 +83,38 @@ public class FirstTest {
         String article_title = title_element.getAttribute("text");
         Assert.assertEquals("Title isn't equals with expected", "Java (programming language)", article_title);
     }
-
+    @Test
+    public void homework1()
+    {
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Can't find 'Search Wikipedia' input or click on it",
+                5);
+        WebElement search_element = waitForElementPresent(By.id("search_src_text"),
+                "can't find the element of search",
+                5);
+        String searchText = search_element.getAttribute("text");
+        Assert.assertEquals("The 'Search...' text isn't find","Search…", searchText);
+    }
+/* Чет не работает, надо разобраться с xpath   @Test
+    public void homework2()
+    {
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Can't find 'Search Wikipedia' input or click on it",
+                5);
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                "Opel",
+                "Can't type 'Opel' or find the search field",
+                5);
+        waitForElementPresent(By.xpath("//*[@id='org.wikipedia:id/page_list_item_container']//*[@instance='13']"),
+                "Can't find index 3 in the search results",
+                5);
+        waitForElementAndClear(By.id("search_src_text"),
+                "Can't clear the search field",
+                10);
+        waitForElementNotPresent(By.id("page_list_item_container"),
+                "There are one or more results of search",
+                10);
+    } */
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
