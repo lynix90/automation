@@ -95,7 +95,7 @@ public class FirstTest {
         String searchText = search_element.getAttribute("text");
         Assert.assertEquals("The 'Search...' text isn't find","Search…", searchText);
     }
-/* Чет не работает, надо разобраться с xpath   @Test
+ @Test
     public void homework2()
     {
         waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
@@ -105,7 +105,7 @@ public class FirstTest {
                 "Opel",
                 "Can't type 'Opel' or find the search field",
                 5);
-        waitForElementPresent(By.xpath("//*[@id='org.wikipedia:id/page_list_item_container']//*[@instance='13']"),
+        waitForElementPresent(By.xpath("//*[@class='android.widget.LinearLayout']//*[@index='3'][@instance='13']"),
                 "Can't find index 3 in the search results",
                 5);
         waitForElementAndClear(By.id("search_src_text"),
@@ -114,7 +114,7 @@ public class FirstTest {
         waitForElementNotPresent(By.id("page_list_item_container"),
                 "There are one or more results of search",
                 10);
-    } */
+    }
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
