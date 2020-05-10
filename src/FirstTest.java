@@ -1,10 +1,12 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -115,6 +117,28 @@ public class FirstTest {
                 "There are one or more results of search",
                 10);
     }
+    @Test
+    public void testSwipeArticle()
+        {
+            waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                    "Can't find 'Search Wikipedia' input or click on it",
+                    5);
+            waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                    "Java",
+                    "Can't type 'Java' or find the search field",
+                    5);
+            waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                    "can't find and click on element of search",
+                    5);
+            waitForElementPresent(By.id("org.wikipedia:id/view_page_title_text"),
+                    "Can't find article title",
+                    10);
+            swipeUp(2000); //чем больше тем медленнее свайп
+            swipeUp(2000);
+            swipeUp(2000);
+            swipeUp(2000);
+            swipeUp(2000);
+    }
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
     {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -153,5 +177,16 @@ public class FirstTest {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         element.clear();
         return (element);
+    }
+    protected void swipeUp (int timeOfSwipe)
+    {
+        TouchAction action = new TouchAction(driver); //вызываем метод touchAction драйвера апиум
+        Dimension size = driver.manage().window().getSize(); //передаем в переменную size с помощью метода
+        //селениума размер экрана
+        int x = size.width/2;
+        int start_y = (int) (size.height*0.8); //с помощью (int) (выражение) происходит перевод double в int. дабл получили
+        //потому что умножали на 0.8
+        int end_y = (int) (size.height*0.2);
+        action.press(x, start_y).waitAction(timeOfSwipe).moveTo(x, end_y).release().perform(); //нажатие, ожидание след действия, сам свайп, отпускание и выполнение всех действий
     }
 }
