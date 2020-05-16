@@ -12,6 +12,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
+import java.util.List;
 
 public class FirstTest {
     private AppiumDriver driver;
@@ -20,12 +21,12 @@ public class FirstTest {
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "5x");
-        capabilities.setCapability("platformVersion", "6.0.1");
+        capabilities.setCapability("deviceName", "Nexus5_8");
+        capabilities.setCapability("platformVersion", "8.0.0");
         capabilities.setCapability("automationName", "Appium");
         capabilities.setCapability("appPackage", "org.wikipedia");
         capabilities.setCapability("appActivity", "main.MainActivity");
-        capabilities.setCapability("app", "C:/Users/Home/Desktop/Automation/apks/org.wikipedia.apk");
+        capabilities.setCapability("app", "C:/IdeaProjects/JavaAppiumAutomation/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
     }
@@ -195,8 +196,9 @@ public class FirstTest {
                 "Can't find 'got it' tip overlay", 8);
         waitForElementAndClear(By.id("org.wikipedia:id/text_input"),
                 "Can't find text input or clear it", 8);
+        String name_of_folder = "Learning programming";
         waitForElementAndSendKeys(By.id("org.wikipedia:id/text_input"),
-                "Learning programming", "Can't find text input or type the name",
+                name_of_folder, "Can't find text input or type the name",
                 8);
         waitForElementAndClick(By.xpath("//*[@text='OK']"),
                 "Can't find or click 'OK' button", 8);
@@ -204,13 +206,62 @@ public class FirstTest {
                 "Can't find or click close button" ,8);
         waitForElementAndClick(By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
                 "Can't find or click My lists button" ,8);
-        waitForElementAndClick(By.id("org.wikipedia:id/item_container"),
+        waitForElementAndClick(By.xpath("//*[@text='" + name_of_folder + "']"),
+                //Использована конкатинация строк (в ' ' кавычки добавляется еще
+                //структура " + имя строковой переменной + ". Так можно использовать в
+                //xpath переменные вместо значения
                 "Can't find or click on saved reading list" ,10);
         swipeElementToLeft(By.xpath("//*[@text='Java (programming language)']"),
                 "Can't swipe and delete element");
         waitForElementNotPresent(By.xpath("//@text='You have no articles added to this list.'"),
                 "There's one or more saved article in list", 10);
     }
+
+    @Test
+
+    public void TestAmountOfNotEmptySearch()
+    {
+        waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                "Can't find 'Search Wikipedia' input or click on it",
+                8);
+        String search_line = "meteora album";
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                search_line,
+                "Can't enter the search line or find it",
+                8);
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        waitForElementPresent(By.xpath(search_result_locator),
+                "can't find anything by request " + search_line,
+                15);
+        int amount_of_search_results = getAmountOfElements(By.xpath(search_result_locator));
+        /*Записали в переменную результат работы метода getAmountOfELements(передав ему xpath
+         Теперь нужно убедиться что результатов больше нуля*/
+        Assert.assertTrue("We found too few results!", amount_of_search_results>0);
+        // в condition пишем условие успеха ассерта
+    }
+
+    @Test
+
+        public void TestAmountOfEmptySearch()
+        {
+            waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                    "Can't find 'Search Wikipedia' input or click on it",
+                    8);
+            String search_line = "ktxktc";
+            waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                    search_line,
+                    "Can't enter the search line or find it",
+                    8);
+            String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
+                    "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+            String empty_result_label = "//*[@text='No results found']";
+            waitForElementPresent(By.xpath(empty_result_label),
+                    "can't find empty result label by request: " + search_line ,
+                    15);
+            //Проверяем что элемент не представлен по search_result_locator
+            //в котором у нас локатор одного из результатов поиска
+            assertElementNotPresent (By.xpath(search_result_locator),"we found some results by request" + search_line);
+        }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -283,7 +334,8 @@ public class FirstTest {
         TouchAction action = new TouchAction(driver);
         action
                 .press(right_x,middle_y)
-                .waitAction(150)
+                .waitAction(300) //здесь лучше 300мс, иначе на тормозных девайсах
+                // свайп не отработает
                 .moveTo(left_x,middle_y)
                 .release()
                 .perform();
@@ -314,5 +366,24 @@ public class FirstTest {
         if (alredy_swiped > max_swipes) - В случае, если элемент на странице не был найден тест бы
         работал бесконечно и не падал без введения условия по ограничению max_swipes
         */
+    }
+    private int getAmountOfElements(By by)
+    {
+        List elements = driver.findElements(by);//функция list создает некий список с названием elements
+        return elements.size(); //size() возвращает количество элементов, которые были найдены с помощью driver.findElements(by)
+        //и записаны в elements(фактически мы возвращаем размер elements)
+    }
+    private void assertElementNotPresent(By by,String error_message)
+    {
+        int amount_of_elements = getAmountOfElements(by);
+        /*Если тест выдает хоть один результат поиска
+        мы будем выдавать exception:
+        */
+        if (amount_of_elements>0) {
+            String default_message = "An element '" + by.toString() + "' supposed to be not present";
+        //Преобразовали by в строковое значение и передаем значение элемента для вывода в сообщении юзеру
+        throw new AssertionError(default_message + " " + error_message);
+        //сама ошибка ассерта
+        }
     }
 }
