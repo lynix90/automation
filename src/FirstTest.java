@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,7 +22,7 @@ public class FirstTest {
     public void setUp() throws Exception {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "Nexus5_8");
+        capabilities.setCapability("deviceName", "mia1");
         capabilities.setCapability("platformVersion", "8.0.0");
         capabilities.setCapability("automationName", "Appium");
         capabilities.setCapability("appPackage", "org.wikipedia");
@@ -263,6 +264,37 @@ public class FirstTest {
             assertElementNotPresent (By.xpath(search_result_locator),"we found some results by request" + search_line);
         }
 
+        @Test
+        public void TestChangeOrientationOnSearchResults ()
+        {
+            waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                    "Can't find 'Search Wikipedia' input or click on it",
+                    8);
+            String search_line = "Java";
+            waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                    search_line,
+                    "Can't enter the search line or find it",
+                    8);
+            waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                    "can't find 'Object-oriented programming language' topic by" + search_line,
+                    10);
+            String title_before_rotation = waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
+                    "text", "Can't find title of article", 15);
+            driver.rotate(ScreenOrientation.LANDSCAPE); //повернули экран с помощью встроенного метода
+            String title_after_rotation = waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
+                    "text", "Can't find title of article", 15);
+            /* Мы будем сравнивать title_before и title_after_rotation, то есть сам текст заголовка
+            Если они совпадают - тест прошел, иначе - тест падает
+             */
+            Assert.assertEquals("Article title have been changed after rotation", title_before_rotation,
+                    title_after_rotation);
+            driver.rotate(ScreenOrientation.PORTRAIT);
+            String title_after_second_rotation = waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
+                    "text", "Can't find title of article", 15);
+            Assert.assertEquals("Article title have been changed after rotation", title_after_rotation,
+                    title_after_second_rotation);
+        }
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
@@ -385,5 +417,11 @@ public class FirstTest {
         throw new AssertionError(default_message + " " + error_message);
         //сама ошибка ассерта
         }
+    }
+    private String waitForElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds)
+    {
+        WebElement element = waitForElementPresent(by,error_message, timeoutInSeconds);
+        return element.getAttribute(attribute);
+        //получаем атрибуты элемента. attribute - Значение атрибута, которое мы будем получать
     }
 }
