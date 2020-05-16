@@ -18,7 +18,7 @@ public class CoreTestCase extends TestCase
     private static String AppiumURL = "http://127.0.0.1:4723/wd/hub";
 
     @Override //указываем что мы перегружаем родительский метод setUp
-    public void setUp() throws Exception {
+    protected void setUp() throws Exception {
         /* Указываем, что мы юзаем метод
         setUp из TestCase
          */
@@ -36,7 +36,7 @@ public class CoreTestCase extends TestCase
     }
 
     @Override
-    public void tearDown() throws Exception
+    protected void tearDown() throws Exception
     /* добавили обработку ексепшна, который возникал
     при вызове tearDown
      */
