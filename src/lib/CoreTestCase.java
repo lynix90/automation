@@ -35,17 +35,15 @@ public class CoreTestCase extends TestCase
         driver = new AndroidDriver(new URL(AppiumURL), capabilities);
     }
 
-    @Override
+   @Override
     protected void tearDown() throws Exception
-    /* добавили обработку ексепшна, который возникал
-    при вызове tearDown
-     */
+    // добавили обработку ексепшна, который возникал
+    //при вызове tearDown
      {
-        driver.quit();
-        super.tearDown();
-        /*с помощью super. вызываем те же методы, которые
-        вызывали в @before и @after, но теперь
-        вызываем их из пакета junid TestCase
-         */
-    }
+     driver.quit();
+     super.tearDown();
+     //с помощью super.вызываем те же методы, которые
+     //вызывали в @before и@after,но теперь
+     //вызываем их из пакета junid TestCase
+ }
 }
