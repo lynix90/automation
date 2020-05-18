@@ -150,4 +150,13 @@ public class MainPageObject {
         return element.getAttribute(attribute);
         //получаем атрибуты элемента. attribute - Значение атрибута, которое мы будем получать
     }
+    public void assertElementPresent(By by, String error_message)
+        {
+            int amount_of_elements = getAmountOfElements(by);
+            if (amount_of_elements<=0)
+            {
+                String default_message = "An element '" + by.toString() + "' supposed to be present";
+                throw new AssertionError(default_message + " " + error_message);
+            }
+    }
 }

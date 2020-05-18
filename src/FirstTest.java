@@ -386,27 +386,32 @@ public class FirstTest extends CoreTestCase
         MainPageObject.swipeElementToLeft(By.xpath("//*[@text='reference software for the handling of FLAC data']"),
                 "Can't swipe and delete element");
         MainPageObject.waitForElementAndClick(By.xpath("//*[@text='system for digitally recreating audible signals']"),
-        "Can't find or click on saved article", 10);
+                "Can't find or click on saved article", 10);
         String second_search_2_article_title = MainPageObject.waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
-                    "text",
-                    "Can't find title text or get attribute 'text'",
-                    10);
+                "text",
+                "Can't find title text or get attribute 'text'",
+                10);
         Assert.assertEquals("Article title have been changed after deleting first article",
-                    second_search_1_article_title, second_search_2_article_title);
-        }
-        /*        public void testHomework3_2 ()
-        {
-                MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
+                second_search_1_article_title, second_search_2_article_title);
+    }
+
+    @Test
+    public void testHomework3_2()
+    {
+        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
                 "Can't find 'Search Wikipedia' input or click on it",
                 8);
-                String first_search_value = "FLAC";
-                MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                        first_search_value,
-                        "Can't type " + "first_search_value" + " or find the search field",
-                        8);
-                String first_search_result_locator = "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-            "//*[@text='Reference software for the handling of FLAC data']";
-                MainPageObject.waitForElementAndClick(By.xpath(first_search_result_locator),
-                        "Can't find or click on result of search",
-                        10); */
+        String first_search_value = "FLAC";
+        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
+                first_search_value,
+                "Can't type " + "first_search_value" + " or find the search field",
+                8);
+        String first_search_result_locator = "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                "//*[@text='Reference software for the handling of FLAC data']";
+        MainPageObject.waitForElementAndClick(By.xpath(first_search_result_locator),
+                "Can't find or click on result of search",
+                10);
+        String title_text_locator = "//*[@resource-id='org.wikipedia:id/view_page_header_container']/*[@resource-id='org.wikipedia:id/view_page_title_text']";
+        MainPageObject.assertElementPresent(By.xpath(title_text_locator), "Can't find a title text");
     }
+}
