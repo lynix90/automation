@@ -3,6 +3,7 @@ package lib;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import junit.framework.TestCase;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import java.net.URL;
 
@@ -40,8 +41,13 @@ public class CoreTestCase extends TestCase
     // добавили обработку ексепшна, который возникал
     //при вызове tearDown
      {
-     driver.quit();
-     super.tearDown();
+         driver.rotate(ScreenOrientation.PORTRAIT);
+         /* добавил в рамках задания 3 из раздела сложные тесты.
+         Чтобы в случае падения после поворота экрана, следующий тест стартовал в
+         портретной ориентации
+         */
+         driver.quit();
+         super.tearDown();
      //с помощью super.вызываем те же методы, которые
      //вызывали в @before и@after,но теперь
      //вызываем их из пакета junid TestCase
