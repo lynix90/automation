@@ -50,6 +50,6 @@ public class CoreTestCase extends TestCase
          super.tearDown();
      //с помощью super.вызываем те же методы, которые
      //вызывали в @before и@after,но теперь
-     //вызываем их из пакета junid TestCase
+     //вызываем их из пакета junit TestCase
  }
 }

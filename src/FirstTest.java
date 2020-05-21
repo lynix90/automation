@@ -1,5 +1,7 @@
 import lib.CoreTestCase;
+import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
+import lib.ui.SearchPageObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -27,53 +29,50 @@ public class FirstTest extends CoreTestCase
     /*
     Переименовали тест. Тест должен начинаться со слова
     test, чтобы junit видел тест
-     */ {
+      {
         MainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text, 'Search Wikipedia')]"), "Can't find 'Search Wikipedia' input or click on it", 5);
 
         MainPageObject.waitForElementAndSendKeys(By.xpath("//*[contains (@text,'Search…')]"), "Java", "Can't find the search element or sendkeys", 5);
 
         MainPageObject.waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find and click on element of search");
+                "can't find and click on element of search"); */ //Теперь этот код работает заменен кодом ниже:
+    {
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.waitForSearchResult("Object-oriented programming language");
     }
 
     @Test
     public void testCancelSearch() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                5);
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Can't type 'Java' or find the search field",
-                5);
-        MainPageObject.waitForElementAndClear(By.id("org.wikipedia:id/search_src_text"),
-                "Can't find search field",
-                5);
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"),
-                "Can't find close button or click on it",
-                5);
-        MainPageObject.waitForElementNotPresent(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "The close element is presented on this screen",
-                5);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.waitForCancelButtonToAppear();
+        SearchPageObject.clickCancelSearch();
+        SearchPageObject.clickCancelSearch();
+        SearchPageObject.waitForCancelButtonToDisappear();
     }
 
     @Test
     public void testCompareArticleTitle() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                5);
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Can't type 'Java' or find the search field",
-                5);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find and click on element of search",
-                5);
-        WebElement title_element = MainPageObject.waitForElementPresent(By.id("org.wikipedia:id/view_page_title_text"),
-                "Can't find article title",
-                10);
-        String article_title = title_element.getAttribute("text");
-        Assert.assertEquals("Title isn't equals with expected", "Java (programming language)", article_title);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        /*
+        данную конструкцию пишем каждый раз, когда вызываем методы из других классов
+        */
+        String article_title = ArticlePageObject.getArticleTitle();
+
+        Assert.assertEquals("Title isn't equals with expected",
+                "Java (programming language)",
+                article_title);
     }
 
     @Test
@@ -123,24 +122,18 @@ public class FirstTest extends CoreTestCase
     */
     @Test
     public void testSwipeArticle() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                5);
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Can't type 'Java' or find the search field",
-                5);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find and click on element of search",
-                10);
-        MainPageObject.waitForElementPresent(By.id("org.wikipedia:id/view_page_title_text"),
-                "Can't find article title",
-                10);
-        MainPageObject.swipeUp(2000); //чем больше тем медленнее свайп
-        MainPageObject.swipeUp(2000);
-        MainPageObject.swipeUp(2000);
-        MainPageObject.swipeUp(2000);
-        MainPageObject.swipeUp(2000);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Appium");
+        SearchPageObject.clickByArticleWithSubstring("Appium");
+
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        /*
+        данную конструкцию пишем каждый раз, когда вызываем методы из других классов
+        */
+        ArticlePageObject.waitForTitleElement();
+        ArticlePageObject.swipeToFooter();
     }
 
     @Test
@@ -414,11 +407,4 @@ public class FirstTest extends CoreTestCase
         String title_text_locator = "//*[@resource-id='org.wikipedia:id/view_page_header_container']/*[@resource-id='org.wikipedia:id/view_page_title_text']";
         MainPageObject.assertElementPresent(By.xpath(title_text_locator), "Can't find a title text");
     }
-/*
-    @Test
-    public void testHomework3_3()
-    {
-        MainPageObject.
-
-*/
     }
