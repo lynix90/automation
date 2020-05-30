@@ -27,8 +27,8 @@ public class CoreTestCase extends TestCase
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("deviceName", "mia1");
-        capabilities.setCapability("platformVersion", "8.0.0");
+        capabilities.setCapability("deviceName", "s10e");
+        capabilities.setCapability("platformVersion", "10");
         capabilities.setCapability("automationName", "Appium");
         capabilities.setCapability("appPackage", "org.wikipedia");
         capabilities.setCapability("appActivity", "main.MainActivity");

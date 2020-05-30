@@ -1,13 +1,10 @@
 import lib.CoreTestCase;
-import lib.ui.ArticlePageObject;
-import lib.ui.MainPageObject;
-import lib.ui.SearchPageObject;
+import lib.ui.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
-import sun.applet.Main;
 
 public class FirstTest extends CoreTestCase
         /* Наследуем в FirstTest, убираем из first test
@@ -106,20 +103,6 @@ public class FirstTest extends CoreTestCase
                 "There are one or more results of search",
                 10);
     }
-
-    /*  Может быть доделаю?
-        @Test
-        public void homework2_3()
-        {
-            waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                    "Can't find 'Search Wikipedia' input or click on it",
-                    5);
-            waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                    "Java",
-                    "Can't type 'Java' or find the search field",
-                    5);
-        }
-    */
     @Test
     public void testSwipeArticle() {
         SearchPageObject SearchPageObject = new SearchPageObject(driver);
@@ -157,68 +140,35 @@ public class FirstTest extends CoreTestCase
 
     @Test
     public void testSaveFirstArticleToMyList() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                8);
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Can't type 'Java' or find the search field",
-                8);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find and click on element of search",
-                10);
-        MainPageObject.waitForElementPresent(By.id("org.wikipedia:id/view_page_title_text"),
-                "Can't find article title",
-                10);
-        MainPageObject.waitForElementAndClick(By.xpath("//android.widget.ImageView[@content-desc='More options']"),
-                "Can't find or click Options button", 8);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@text='Add to reading list'][@instance='2']"),
-                //Так тапаем по 3 пункту выпадающего меню (индекс), имеющему инстанс 2. без //* между параметрами, так как они находятся
-                //в самом linearLayout (By.xpath("//*[@class='android.widget.LinearLayout'][@index='2'][@instance='2']")
-                "Can't find or click 'Add to reading list' button", 8);
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/onboarding_button"),
-                "Can't find 'got it' tip overlay", 8);
-        MainPageObject.waitForElementAndClear(By.id("org.wikipedia:id/text_input"),
-                "Can't find text input or clear it", 8);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject.waitForTitleElement();
+        String article_title = ArticlePageObject.getArticleTitle();
         String name_of_folder = "Learning programming";
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/text_input"),
-                name_of_folder, "Can't find text input or type the name",
-                8);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@text='OK']"),
-                "Can't find or click 'OK' button", 8);
-        MainPageObject.waitForElementAndClick(By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
-                "Can't find or click close button", 8);
-        MainPageObject.waitForElementAndClick(By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
-                "Can't find or click My lists button", 8);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@text='" + name_of_folder + "']"),
-                //Использована конкатинация строк (в ' ' кавычки добавляется еще
-                //структура " + имя строковой переменной + ". Так можно использовать в
-                //xpath переменные вместо значения
-                "Can't find or click on saved reading list", 10);
-        MainPageObject.swipeElementToLeft(By.xpath("//*[@text='Java (programming language)']"),
-                "Can't swipe and delete element");
-        MainPageObject.waitForElementNotPresent(By.xpath("//@text='You have no articles added to this list.'"),
-                "There's one or more saved article in list", 10);
+        ArticlePageObject.addArticleToMyList(name_of_folder);
+        ArticlePageObject.closeArticle();
+
+        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI.clickMyLists();
+
+        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
+        MyListsPageObject.openFolderByName(name_of_folder);
+        MyListsPageObject.swipeByArticleToDelete(article_title);
     }
 
     @Test
 
     public void testAmountOfNotEmptySearch() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                8);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
         String search_line = "meteora album";
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Can't enter the search line or find it",
-                8);
-        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/*[@resource-id='org.wikipedia:id/page_list_item_container']";
-        MainPageObject.waitForElementPresent(By.xpath(search_result_locator),
-                "can't find anything by request " + search_line,
-                15);
-        int amount_of_search_results = MainPageObject.getAmountOfElements(By.xpath(search_result_locator));
-        /*Записали в переменную результат работы метода getAmountOfELements(передав ему xpath
-         Теперь нужно убедиться что результатов больше нуля*/
+        SearchPageObject.typeSearchLine(search_line);
+        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
         Assert.assertTrue("We found too few results!", amount_of_search_results > 0);
         // в condition пишем условие успеха ассерта
     }
@@ -226,23 +176,12 @@ public class FirstTest extends CoreTestCase
     @Test
 
     public void testAmountOfEmptySearch() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                8);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
         String search_line = "ktxktc";
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Can't enter the search line or find it",
-                8);
-        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
-                "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
-        String empty_result_label = "//*[@text='No results found']";
-        MainPageObject.waitForElementPresent(By.xpath(empty_result_label),
-                "can't find empty result label by request: " + search_line,
-                15);
-        //Проверяем что элемент не представлен по search_result_locator
-        //в котором у нас локатор одного из результатов поиска
-        MainPageObject.assertElementNotPresent(By.xpath(search_result_locator), "we found some results by request" + search_line);
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.waitForEmptyResultsLabel();
+        SearchPageObject.assertThereIsNoResultOfSearch();
     }
 
     @Test
