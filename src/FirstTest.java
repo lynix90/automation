@@ -1,75 +1,21 @@
 import lib.CoreTestCase;
 import lib.ui.*;
-import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
+import sun.applet.Main;
 
-public class FirstTest extends CoreTestCase
+public class FirstTest extends CoreTestCase {
         /* Наследуем в FirstTest, убираем из first test
 то, что вынесли в coretestcase, в том числе лишние импорты
- */ {
-    /*
+/*
     Следующую конструкцию используем т.к
     перенесли все методы из firsttest в mainpageobject:
-     */
+ */
     private MainPageObject MainPageObject;
-
     protected void setUp() throws Exception {
         super.setUp();
         MainPageObject = new MainPageObject(driver);
-    }
-
-    @Test
-    public void testSearch()
-    /*
-    Переименовали тест. Тест должен начинаться со слова
-    test, чтобы junit видел тест
-      {
-        MainPageObject.waitForElementAndClick(By.xpath("//*[contains(@text, 'Search Wikipedia')]"), "Can't find 'Search Wikipedia' input or click on it", 5);
-
-        MainPageObject.waitForElementAndSendKeys(By.xpath("//*[contains (@text,'Search…')]"), "Java", "Can't find the search element or sendkeys", 5);
-
-        MainPageObject.waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find and click on element of search"); */ //Теперь этот код работает заменен кодом ниже:
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
-    }
-
-    @Test
-    public void testCancelSearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForCancelButtonToAppear();
-        SearchPageObject.clickCancelSearch();
-        SearchPageObject.clickCancelSearch();
-        SearchPageObject.waitForCancelButtonToDisappear();
-    }
-
-    @Test
-    public void testCompareArticleTitle() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        /*
-        данную конструкцию пишем каждый раз, когда вызываем методы из других классов
-        */
-        String article_title = ArticlePageObject.getArticleTitle();
-
-        Assert.assertEquals("Title isn't equals with expected",
-                "Java (programming language)",
-                article_title);
     }
 
     @Test
@@ -81,7 +27,7 @@ public class FirstTest extends CoreTestCase
                 "can't find the element of search",
                 5);
         String searchText = search_element.getAttribute("text");
-        Assert.assertEquals("The 'Search...' text isn't find", "Search…", searchText);
+        assertEquals("The 'Search...' text isn't find", "Search…", searchText);
     }
 
     @Test
@@ -101,135 +47,6 @@ public class FirstTest extends CoreTestCase
                 10);
         MainPageObject.waitForElementNotPresent(By.id("page_list_item_container"),
                 "There are one or more results of search",
-                10);
-    }
-    @Test
-    public void testSwipeArticle() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Appium");
-        SearchPageObject.clickByArticleWithSubstring("Appium");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        /*
-        данную конструкцию пишем каждый раз, когда вызываем методы из других классов
-        */
-        ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.swipeToFooter();
-    }
-
-    @Test
-    public void testSwipeToElement() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                5);
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                "Appium",
-                "Can't type 'Appium' or find the search field",
-                5);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='Appium']"),
-                /* удаляем конструкцию //* (переход на более низкий уровень), так как мы будем искать
-                текст прямо в элементе page_list_item_title
-                 */
-                "can't find and click on element of search",
-                5);
-        MainPageObject.swipeUpToFindElement(By.xpath("//*[@text='View page in browser']"),
-                "Can't find the end of the article", 20);
-    }
-
-    @Test
-    public void testSaveFirstArticleToMyList() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-        ArticlePageObject.waitForTitleElement();
-        String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
-        ArticlePageObject.closeArticle();
-
-        NavigationUI NavigationUI = new NavigationUI(driver);
-        NavigationUI.clickMyLists();
-
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(name_of_folder);
-        MyListsPageObject.swipeByArticleToDelete(article_title);
-    }
-
-    @Test
-
-    public void testAmountOfNotEmptySearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        SearchPageObject.initSearchInput();
-        String search_line = "meteora album";
-        SearchPageObject.typeSearchLine(search_line);
-        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
-        Assert.assertTrue("We found too few results!", amount_of_search_results > 0);
-        // в condition пишем условие успеха ассерта
-    }
-
-    @Test
-
-    public void testAmountOfEmptySearch() {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-        SearchPageObject.initSearchInput();
-        String search_line = "ktxktc";
-        SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.waitForEmptyResultsLabel();
-        SearchPageObject.assertThereIsNoResultOfSearch();
-    }
-
-    @Test
-    public void testChangeOrientationOnSearchResults() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                8);
-        String search_line = "Java";
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Can't enter the search line or find it",
-                8);
-        MainPageObject.waitForElementAndClick(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find 'Object-oriented programming language' topic by" + search_line,
-                10);
-        String title_before_rotation = MainPageObject.waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
-                "text", "Can't find title of article", 15);
-        driver.rotate(ScreenOrientation.LANDSCAPE); //повернули экран с помощью встроенного метода
-        String title_after_rotation = MainPageObject.waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
-                "text", "Can't find title of article", 15);
-            /* Мы будем сравнивать title_before и title_after_rotation, то есть сам текст заголовка
-            Если они совпадают - тест прошел, иначе - тест падает
-             */
-        Assert.assertEquals("Article title have been changed after rotation", title_before_rotation,
-                title_after_rotation);
-        driver.rotate(ScreenOrientation.PORTRAIT);
-        String title_after_second_rotation = MainPageObject.waitForElementAndGetAttribute(By.id("org.wikipedia:id/view_page_title_text"),
-                "text", "Can't find title of article", 15);
-        Assert.assertEquals("Article title have been changed after rotation", title_after_rotation,
-                title_after_second_rotation);
-    }
-
-    @Test
-    public void testCheckSearchArticleInBackground() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                8);
-        String search_line = "Java";
-        MainPageObject.waitForElementAndSendKeys(By.id("org.wikipedia:id/search_src_text"),
-                search_line,
-                "Can't enter the search line or find it",
-                8);
-        MainPageObject.waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find 'Object-oriented programming language' topic by" + search_line,
-                10);
-        driver.runAppInBackground(5);
-        MainPageObject.waitForElementPresent(By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                "can't find after returning from background 'Object-oriented programming language' topic by" + search_line,
                 10);
     }
 
@@ -323,7 +140,7 @@ public class FirstTest extends CoreTestCase
                 "text",
                 "Can't find title text or get attribute 'text'",
                 10);
-        Assert.assertEquals("Article title have been changed after deleting first article",
+        assertEquals("Article title have been changed after deleting first article",
                 second_search_1_article_title, second_search_2_article_title);
     }
 

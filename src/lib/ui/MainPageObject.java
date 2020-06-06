@@ -159,4 +159,13 @@ public class MainPageObject {
                 throw new AssertionError(default_message + " " + error_message);
             }
     }
+    public void tapOptionsElementLowerPoint(By by, String error_message, long timeoutInSeconds)
+    {
+        waitForElementPresent(by, error_message, timeoutInSeconds);
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        int x = element.getLocation().getX();
+        int y = (int)(element.getSize().getHeight()*0.95) ;
+        TouchAction action = new TouchAction(driver);
+        action.press(x, y).release().perform();
+    }
 }

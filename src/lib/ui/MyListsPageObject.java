@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 //Это "Конструктор"
 public class MyListsPageObject extends MainPageObject {
     public static final String
-    FOLDER_BY_NAME_TPL = "\"//*[@text='{FOLDER_NAME}']",
+    FOLDER_BY_NAME_TPL = "//*[@text='{FOLDER_NAME}']",
     ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
 
     private static String getFolderXpathByName(String name_of_folder)
@@ -15,7 +15,7 @@ public class MyListsPageObject extends MainPageObject {
     }
     private static String getSavedArticleXpathByTitle(String article_title)
     {
-        return ARTICLE_BY_TITLE_TPL.replace("TITLE", article_title);
+        return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", article_title);
     }
     public MyListsPageObject (AppiumDriver driver) {
         super(driver);

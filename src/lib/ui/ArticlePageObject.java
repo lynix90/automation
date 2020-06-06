@@ -1,7 +1,9 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 
 public class ArticlePageObject extends MainPageObject
@@ -35,8 +37,13 @@ public class ArticlePageObject extends MainPageObject
     }
     public void addArticleToMyList(String name_of_folder)
     {
-        this.waitForElementAndClick(By.xpath(OPTIONS_BUTTON),
+        /*this.waitForElementAndClick(By.xpath(OPTIONS_BUTTON),
                 "Can't find or click Options button", 8);
+РАБОТАЮЩИЙ КОД
+         */
+        this.tapOptionsElementLowerPoint(By.xpath(OPTIONS_BUTTON),
+                "Can't find or tap options button by coordinates",
+                10); //мой метод, который тапает по краю кнопки Options - пытался решить проблему с статусбаром
         this.waitForElementAndClick(By.xpath(OPTIONS_ADD_TO_MY_LIST_BUTTON),
                 //Так тапаем по 3 пункту выпадающего меню (индекс), имеющему инстанс 2. без //* между параметрами, так как они находятся
                 //в самом linearLayout (By.xpath("//*[@class='android.widget.LinearLayout'][@index='2'][@instance='2']")

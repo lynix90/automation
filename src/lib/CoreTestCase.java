@@ -28,7 +28,7 @@ public class CoreTestCase extends TestCase
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName", "s10e");
-        capabilities.setCapability("platformVersion", "10");
+        capabilities.setCapability("platformVersion", "8.0.0");
         capabilities.setCapability("automationName", "Appium");
         capabilities.setCapability("appPackage", "org.wikipedia");
         capabilities.setCapability("appActivity", "main.MainActivity");
@@ -41,7 +41,7 @@ public class CoreTestCase extends TestCase
     // добавили обработку ексепшна, который возникал
     //при вызове tearDown
      {
-         driver.rotate(ScreenOrientation.PORTRAIT);
+         this.rotateScreenPortrait();
          /* добавил в рамках задания 3 из раздела сложные тесты.
          Чтобы в случае падения после поворота экрана, следующий тест стартовал в
          портретной ориентации
@@ -51,5 +51,17 @@ public class CoreTestCase extends TestCase
      //с помощью super.вызываем те же методы, которые
      //вызывали в @before и@after,но теперь
      //вызываем их из пакета junit TestCase
+ }
+ protected void rotateScreenPortrait()
+ {
+     driver.rotate(ScreenOrientation.PORTRAIT);
+ }
+ protected void rotateScreenLandscape()
+ {
+     driver.rotate(ScreenOrientation.LANDSCAPE);
+ }
+ protected void backgroundApp(int seconds)
+ {
+     driver.runAppInBackground(seconds);
  }
 }
