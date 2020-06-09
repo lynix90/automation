@@ -2,6 +2,7 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 public class SearchPageObject extends MainPageObject {
     private static final String
@@ -68,7 +69,7 @@ public class SearchPageObject extends MainPageObject {
     public int getAmountOfFoundArticles() {
         this.waitForElementPresent(By.xpath(SEARCH_RESULT_ELEMENT),
                 "can't find anything by request ",
-                15);
+                10);
         return this.getAmountOfElements(By.xpath(SEARCH_RESULT_ELEMENT));
         /*Записали в переменную результат работы метода getAmountOfELements(передав ему xpath
          Теперь нужно убедиться что результатов больше нуля*/
@@ -82,5 +83,12 @@ public class SearchPageObject extends MainPageObject {
     public void assertThereIsNoResultOfSearch()
     {
         this.assertElementNotPresent(By.xpath(SEARCH_RESULT_ELEMENT), "we found some results by request");
+    }
+    public void searchInputElementAppear()
+    {
+      this.assertElementPresent(By.xpath(SEARCH_INPUT), "The search text label isn't present");
+    }
+    public void initSearchClick() {
+        this.waitForElementAndClick(By.xpath(SEARCH_INIT_ELEMENT), "Can't find and click Search init element", 5);
     }
 }

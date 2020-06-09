@@ -1,28 +1,28 @@
+package tests;
+
 import lib.CoreTestCase;
 import lib.ui.*;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import sun.applet.Main;
 
-public class FirstTest extends CoreTestCase {
-        /* Наследуем в FirstTest, убираем из first test
-то, что вынесли в coretestcase, в том числе лишние импорты
-/*
-    Следующую конструкцию используем т.к
+public class Homeworks extends CoreTestCase {
+
+    /*
+        Следующую конструкцию используем т.к
     перенесли все методы из firsttest в mainpageobject:
- */
+
     private MainPageObject MainPageObject;
     protected void setUp() throws Exception {
         super.setUp();
         MainPageObject = new MainPageObject(driver);
     }
+     */
 
-    @Test
+
+    /*
+        @Test
     public void testHomework2_1() {
-        MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
-                "Can't find 'Search Wikipedia' input or click on it",
-                5);
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
         WebElement search_element = MainPageObject.waitForElementPresent(By.id("search_src_text"),
                 "can't find the element of search",
                 5);
@@ -30,7 +30,16 @@ public class FirstTest extends CoreTestCase {
         assertEquals("The 'Search...' text isn't find", "Search…", searchText);
     }
 
+    ПОСЛЕ РЕФАКТОРИНГА:
+     */
     @Test
+    public void testHomework2_1() {
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchClick();
+        SearchPageObject.searchInputElementAppear();
+    }
+    /*
+     @Test
     public void testHomework2_2() {
         MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
                 "Can't find 'Search Wikipedia' input or click on it",
@@ -49,8 +58,20 @@ public class FirstTest extends CoreTestCase {
                 "There are one or more results of search",
                 10);
     }
-
+    ПОСЛЕ РЕФАКТОРИНГА:
+     */
     @Test
+    public void testHomework2_2() {
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Opel");
+        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
+        assertTrue("We found one or less search results", amount_of_search_results>1);
+        SearchPageObject.clickCancelSearch();
+        SearchPageObject.assertThereIsNoResultOfSearch();
+    }
+/*
+@Test
     public void testHomework3_1() {
         MainPageObject.waitForElementAndClick(By.id("org.wikipedia:id/search_container"),
                 "Can't find 'Search Wikipedia' input or click on it",
@@ -140,10 +161,40 @@ public class FirstTest extends CoreTestCase {
                 "text",
                 "Can't find title text or get attribute 'text'",
                 10);
-        assertEquals("Article title have been changed after deleting first article",
-                second_search_1_article_title, second_search_2_article_title);
+        assertEquals("Article title have been changed after deleting first article","","");
     }
-
+    ПОСЛЕ РЕФАКТОРИНГА:
+ */
+@Test
+    public void testHomework3_1() {
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("FLAC");
+        SearchPageObject.clickByArticleWithSubstring("Reference software for the handling of FLAC data");
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject.waitForTitleElement();
+        String article_title = ArticlePageObject.getArticleTitle();
+        String name_of_folder = "First reading list";
+        ArticlePageObject.addArticleToMyList(name_of_folder);
+        ArticlePageObject.closeArticle();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Direct Stream Digital");
+        SearchPageObject.clickByArticleWithSubstring("System for digitally recreating audible signals");
+        ArticlePageObject.waitForTitleElement();
+        String second_article_title = ArticlePageObject.getArticleTitle();
+        ArticlePageObject.addMoreArticlesToMyList(name_of_folder);
+        ArticlePageObject.closeArticle();
+        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI.clickMyLists();
+        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
+        MyListsPageObject.openFolderByName(name_of_folder);
+        MyListsPageObject.swipeByArticleToDelete(article_title);
+        MyListsPageObject.openArticleByName(second_article_title);
+        ArticlePageObject.waitForTitleElement();
+        String second_article_title_after = ArticlePageObject.getArticleTitle();
+        assertEquals("Article title have been changed after deleting first article",second_article_title,second_article_title_after);
+    }
+    /*
     @Test
     public void testHomework3_2()
     {
@@ -163,5 +214,15 @@ public class FirstTest extends CoreTestCase {
         String title_text_locator = "//*[@resource-id='org.wikipedia:id/view_page_header_container']/*[@resource-id='org.wikipedia:id/view_page_title_text']";
         MainPageObject.assertElementPresent(By.xpath(title_text_locator), "Can't find a title text");
     }
-
+    ПОСЛЕ РЕФАКТОРИНГА:
+     */
+    @Test
+    public void testHomework3_2(){
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("FLAC");
+        SearchPageObject.clickByArticleWithSubstring("Reference software for the handling of FLAC data");
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject.assertArticleTitlePresentedByName();
     }
+}

@@ -23,11 +23,12 @@ public class MyListsPageObject extends MainPageObject {
     public void openFolderByName (String name_of_folder)
     {
         String folder_name_xpath = getFolderXpathByName(name_of_folder);
+        waitForElementPresent(By.xpath(folder_name_xpath),"Can't find folder by name",7);
         this.waitForElementAndClick(By.xpath(folder_name_xpath),
                 //Использована конкатинация строк (в ' ' кавычки добавляется еще
                 //структура " + имя строковой переменной + ". Так можно использовать в
                 //xpath переменные вместо значения
-                "Can't find folder by name" + name_of_folder, 10);
+                "Can't open folder by name " + name_of_folder, 10);
     }
     public void waitForArticleToAppearByTitle(String article_title) {
         String article_xpath = getSavedArticleXpathByTitle(article_title);
@@ -45,5 +46,10 @@ public class MyListsPageObject extends MainPageObject {
         this.swipeElementToLeft(By.xpath(article_xpath),
                 "Can't swipe and delete element");
         this.waitForArticleToDisappearByTitle (article_title);
+    }
+    public void openArticleByName(String article_title){
+        this.waitForArticleToAppearByTitle(article_title);
+        String article_xpath = getSavedArticleXpathByTitle(article_title);
+        this.waitForElementAndClick(By.xpath(article_xpath),"Can't find or click on saved article", 10);
     }
 }
